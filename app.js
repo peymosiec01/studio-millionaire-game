@@ -704,7 +704,7 @@ function renderSplash(app) {
   const secondaryAction = hasProgress
     ? `<button class="secondary-btn splash-secondary" onclick="startGame()">Start New Career</button>`
     : `<button disabled class="settings-launch splash-secondary" onclick="openSettings()">Open Settings</button>`;
-  const mobileSettingsAction = `<button class="settings-launch splash-mobile-settings" onclick="openSettings()">Settings</button>`;
+  const mobileSettingsAction = `<button disabled class="settings-launch splash-mobile-settings" onclick="openSettings()">Settings</button>`;
 
   app.innerHTML = `
     <div class="splash">

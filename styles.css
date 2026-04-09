@@ -467,6 +467,19 @@ header {
   border-color: var(--blue-300);
   color: var(--blue-100);
 }
+.settings-launch:disabled,
+.settings-launch[disabled] {
+  background: rgba(24, 38, 70, 0.35);
+  border-color: rgba(80, 110, 150, 0.35);
+  color: rgba(140, 170, 210, 0.7);
+  cursor: default;
+}
+.settings-launch:disabled:hover,
+.settings-launch[disabled]:hover {
+  background: rgba(24, 38, 70, 0.35);
+  border-color: rgba(80, 110, 150, 0.35);
+  color: rgba(140, 170, 210, 0.7);
+}
 
 /* Progress snapshot */
 .progress-summary {
