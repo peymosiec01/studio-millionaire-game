@@ -703,7 +703,7 @@ function renderSplash(app) {
     : `<button class="cta-btn splash-primary" onclick="startGame()">Start Recruit Stage</button>`;
   const secondaryAction = hasProgress
     ? `<button class="secondary-btn splash-secondary" onclick="startGame()">Start New Career</button>`
-    : `<button class="settings-launch splash-secondary" onclick="openSettings()">Open Settings</button>`;
+    : `<button disabled class="settings-launch splash-secondary" onclick="openSettings()">Open Settings</button>`;
   const mobileSettingsAction = `<button class="settings-launch splash-mobile-settings" onclick="openSettings()">Settings</button>`;
 
   app.innerHTML = `
@@ -730,7 +730,7 @@ function renderSplash(app) {
               ? `Provider: Microsoft Foundry<br>Deployment: ${state.foundryDeployment}`
               : `Provider: Anthropic Claude<br>Model: ${state.model}`}
           </div>
-          <button class="settings-launch splash-settings" onclick="openSettings()">Open Settings</button>
+          <button disabled class="settings-launch splash-settings" onclick="openSettings()">Open Settings</button>
         </div>
       </div>
 
