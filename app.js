@@ -144,7 +144,7 @@ const STAGE_MAP = Object.fromEntries(STAGES.map((stage) => [stage.key, stage]));
 /* STATE */
 let state = {
   screen: "splash",
-  provider: "anthropic",
+  provider: "foundry",
   apiKey: HARDCODED_ANTHROPIC_KEY,
   foundryKey: HARDCODED_FOUNDRY_KEY,
   foundryEndpoint: DEFAULT_FOUNDRY_ENDPOINT,
