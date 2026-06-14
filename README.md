@@ -1,5 +1,8 @@
 # 🎮 Studio Millionaire AI
 
+<img width="923" height="727" alt="image" src="https://github.com/user-attachments/assets/13f0cabe-2198-4ff3-af6c-2a73e14fc278" />
+
+
 ### Learn Anything Through AI Game Shows
 
 > Transform knowledge into engaging game-show experiences using Azure AI Foundry, Foundry IQ, and AI-powered question generation.
@@ -85,7 +88,8 @@ The result is a reusable platform capable of transforming almost any knowledge s
 
 ## 🏗️ Logical Architecture
 
-![Logical Architecture](public\studio_millionaire_logical_architecture_readable.png)
+![Logical Architecture](public/studio_millionaire_logical_architecture_readable.png)
+
 
 ### Agents
 
@@ -112,7 +116,7 @@ The result is a reusable platform capable of transforming almost any knowledge s
 
 ## ☁️ Technical Architecture
 
-![Technical Architecture](public\studio_millionaire_architecture.png)
+![Technical Architecture](public/studio_millionaire_architecture.png)
 
 ### Core Components
 
