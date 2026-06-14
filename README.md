@@ -33,6 +33,8 @@ Players can:
 * Learn Microsoft Copilot Studio concepts
 * Create custom game shows from their own content
 
+<img width="1595" height="941" alt="image" src="https://github.com/user-attachments/assets/7a0fd57a-8c4b-42a0-993a-75e424247794" />
+
 ---
 
 ## ✨ Key Features
