@@ -1,6 +1,6 @@
 /* CONFIG */
 const HARDCODED_ANTHROPIC_KEY = "";
-const HARDCODED_FOUNDRY_KEY = "Cmj0X4cU1lelRUMwQiB8qCiQshm7AYOMGpn3wSG59sGYFvVYQMpcJQQJ99CCACR0EKYXJ3w3AAAAACOG6w1A";
+const HARDCODED_FOUNDRY_KEY = "";
 const DEFAULT_FOUNDRY_ENDPOINT = "https://res-jsaibuildathon.openai.azure.com/openai/v1/";
 const DEFAULT_FOUNDRY_DEPLOYMENT = "gpt-4.1-mini";
 const SAVE_KEY = "copilot-rank-ladder-progress-v1";

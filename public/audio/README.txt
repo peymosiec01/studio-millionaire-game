@@ -1,4 +1,4 @@
-Current preferred files already wired in app.js:
+Current preferred files already wired in src/App.jsx:
 
 - mus_mainMenu.webm        (menu/splash loop)
 - mus_questionBed_1_5.webm (question gameplay loop)

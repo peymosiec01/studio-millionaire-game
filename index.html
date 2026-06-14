@@ -1,59 +1,18 @@
-<!DOCTYPE html>
+﻿<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#03080f" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Studio Millionaire | Copilot Studio Quiz Game</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
-</head>
-<body>
-  <header>
-    <div class="brand-lockup">
-      <div class="hero-mark" aria-hidden="true">
-        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="50" cy="50" r="47" stroke="#F2E88F" stroke-width="1.5" opacity="0.75"/>
-          <circle cx="50" cy="50" r="34" stroke="#5B89DE" stroke-width="1.5" opacity="0.7"/>
-          <circle cx="50" cy="50" r="20" stroke="#F2E88F" stroke-width="1.5" opacity="0.55"/>
-          <path d="M50 10V90M10 50H90M23 23L77 77M77 23L23 77" stroke="#2E59A9" stroke-width="1.4" opacity="0.45"/>
-          <circle cx="50" cy="50" r="8" fill="#F2E88F"/>
-          <path d="M31 50C31 39.5 39.5 31 50 31C60.5 31 69 39.5 69 50" stroke="#F2E88F" stroke-width="3" stroke-linecap="round"/>
-          <path d="M34 61C38 66 43 69 50 69C57 69 62 66 66 61" stroke="#5B89DE" stroke-width="3" stroke-linecap="round"/>
-        </svg>
-      </div>
-      <div class="brand-copy">
-        <div class="logo-eyebrow">Learning Game</div>
-        <div class="brand-title">Studio<span class="brand-accent"> Millionaire</span></div>
-        <div class="brand-sub">Who wants to master Copilot Studio?</div>
-      </div>
-    </div>
-    <div class="copilot-badge" aria-label="Microsoft Copilot badge">
-      <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="copilotBlue" x1="10" y1="12" x2="54" y2="54" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#69A9FF"/>
-            <stop offset="1" stop-color="#315DFF"/>
-          </linearGradient>
-          <linearGradient id="copilotTeal" x1="50" y1="10" x2="14" y2="52" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#72F1D3"/>
-            <stop offset="1" stop-color="#12A4FF"/>
-          </linearGradient>
-        </defs>
-        <path d="M22 14C28 10 36 10 42 14L48 18C54 22 54 30 48 34L40 40C35 44 29 44 24 40L16 34C10 30 10 22 16 18L22 14Z" fill="url(#copilotBlue)"/>
-        <path d="M18 30C22 26 28 26 32 30L38 36C42 40 42 46 38 50C34 54 28 54 24 50L18 44C14 40 14 34 18 30Z" fill="url(#copilotTeal)"/>
-        <circle cx="32" cy="32" r="8" fill="#F7FBFF" fill-opacity="0.92"/>
-      </svg>
-      <span>Copilot</span>
-    </div>
-  </header>
-
-  <div id="app"></div>
-
-  <script src="app.js" defer></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#03080f" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <title>Studio Millionaire | Copilot Studio Quiz Game</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
 </html>
