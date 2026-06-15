@@ -83,8 +83,8 @@ export function SettingsModal({
                         }, true)
                       }
                     >
+                      <option value="direct">Azure OpenAI API Key</option>
                       <option value="agent">Foundry Agent with Foundry IQ</option>
-                      <option value="direct">Direct Azure OpenAI model</option>
                     </select>
 
                     {state.foundryAgentEnabled && (
@@ -141,11 +141,14 @@ export function SettingsModal({
 
                     {!state.foundryAgentEnabled && (
                       <>
-                        <label htmlFor="foundryKeyInput">Azure OpenAI API Key</label>
+                        <label htmlFor="foundryKeyInput">Azure OpenAI API Key override</label>
                         <input
                           id="foundryKeyInput"
                           type="password"
+                          autoComplete="off"
+                          spellCheck="false"
                           value={state.foundryKey}
+                          placeholder="Configured securely on the server"
                           onChange={(e) =>
                             updateState((draft) => {
                               draft.foundryKey = e.target.value;
@@ -183,7 +186,7 @@ export function SettingsModal({
                         />
 
                         <div className="hint">
-                          Direct model mode uses the Azure OpenAI endpoint, deployment name, and API key. It does not use the Foundry Agent or Foundry IQ tool.
+                          Direct model mode uses the Azure OpenAI endpoint and deployment name. Leave the key blank to use the server-side Azure App Setting; keys typed here are only for local testing.
                         </div>
                       </>
                     )}

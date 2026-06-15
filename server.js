@@ -45,6 +45,10 @@ function sendStatic(req, res) {
 }
 
 const server = createServer((req, res) => {
+  if (req.url?.startsWith("/health")) {
+    sendJson(res, 200, { status: "ok" });
+    return;
+  }
   if (req.url?.startsWith("/api/foundry/chat")) {
     handleFoundryChat(req, res);
     return;

@@ -42,12 +42,13 @@ export async function callFoundry(current, userPrompt) {
   const deployment = current.foundryDeployment.trim();
   if (!endpoint) throw new Error("No Azure OpenAI endpoint provided. Please enter it in settings.");
   if (!deployment) throw new Error("No deployment name provided. Please enter it in settings.");
-  const data = await postLocalJson("/api/foundry/chat", {
-    foundryKey: key,
+  const payload = {
     foundryOpenAiEndpoint: endpoint,
     foundryDeployment: deployment,
     prompt: userPrompt,
-  });
+  };
+  if (key) payload.foundryKey = key;
+  const data = await postLocalJson("/api/foundry/chat", payload);
   return data.text || "";
 }
 
@@ -58,14 +59,15 @@ export async function callFoundryAgent(current, userPrompt) {
   const agentVersion = current.foundryAgentVersion.trim();
   if (!endpoint) throw new Error("No Azure AI Foundry project endpoint provided. Please enter it in settings.");
   if (!agentName) throw new Error("Foundry Agent mode is enabled, but no agent name is configured.");
-  const data = await postLocalJson("/api/foundry/agent", {
-    foundryKey: key,
+  const payload = {
     foundryProjectEndpoint: endpoint,
     foundryAgentName: agentName,
     foundryAgentVersion: agentVersion,
     foundryAgentAutoApprove: current.foundryAgentAutoApprove,
     prompt: userPrompt,
-  });
+  };
+  if (key) payload.foundryKey = key;
+  const data = await postLocalJson("/api/foundry/agent", payload);
   const text = (data.text || "").trim();
   if (!text) throw new Error("The Foundry Agent returned no response text.");
   return text;

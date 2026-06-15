@@ -3,8 +3,19 @@ import { existsSync } from "node:fs";
 
 const tokenCache = new Map();
 
+function cleanConfigValue(value) {
+  if (typeof value !== "string") return "";
+  let normalized = value.trim();
+  while (normalized.endsWith(";")) normalized = normalized.slice(0, -1).trim();
+  if ((normalized.startsWith("\"") && normalized.endsWith("\"")) || (normalized.startsWith("'") && normalized.endsWith("'"))) {
+    normalized = normalized.slice(1, -1).trim();
+  }
+  while (normalized.endsWith(";")) normalized = normalized.slice(0, -1).trim();
+  return normalized;
+}
+
 export function getOpenAiBaseUrl(endpoint) {
-  const trimmed = String(endpoint || "").trim();
+  const trimmed = cleanConfigValue(endpoint);
   const normalized = trimmed.endsWith("/") ? trimmed : `${trimmed}/`;
   if (normalized.includes("/openai/v1/")) return normalized;
   if (normalized.endsWith("/openai/")) return `${normalized}v1/`;
@@ -178,30 +189,31 @@ async function postFoundryJson(url, auth, body) {
 }
 
 function resolveFoundryChatConfig(body, env) {
-  const key = String(body.foundryKey || env.AZURE_OPENAI_API_KEY || env.FOUNDRY_API_KEY || "").trim();
-  const endpoint = String(
-    body.foundryOpenAiEndpoint ||
+  const key = cleanConfigValue(env.AZURE_OPENAI_API_KEY || env.FOUNDRY_API_KEY || env.HARDCODED_FOUNDRY_KEY || body.foundryKey || "");
+  const endpoint = cleanConfigValue(
     env.AZURE_OPENAI_ENDPOINT ||
     env.FOUNDRY_OPENAI_ENDPOINT ||
+    env.DEFAULT_FOUNDRY_ENDPOINT ||
+    body.foundryOpenAiEndpoint ||
     ""
   ).trim();
   return { key, endpoint };
 }
 
 function resolveFoundryAgentConfig(body, env) {
-  const endpoint = String(
+  const endpoint = cleanConfigValue(
     body.foundryProjectEndpoint ||
     env.AZURE_AI_PROJECT_ENDPOINT ||
     env.AZURE_EXISTING_AIPROJECT_ENDPOINT ||
     env.FOUNDRY_PROJECT_ENDPOINT ||
     ""
   ).trim();
-  const agentVersion = String(body.foundryAgentVersion || env.FOUNDRY_AGENT_VERSION || "").trim();
+  const agentVersion = cleanConfigValue(body.foundryAgentVersion || env.FOUNDRY_AGENT_VERSION || "");
   return { endpoint, agentVersion };
 }
 
 async function resolveFoundryAgentAuth(body, env) {
-  const explicitToken = String(body.foundryAccessToken || env.AZURE_FOUNDRY_ACCESS_TOKEN || "").trim();
+  const explicitToken = cleanConfigValue(body.foundryAccessToken || env.AZURE_FOUNDRY_ACCESS_TOKEN || "");
   if (explicitToken) return { bearerToken: explicitToken };
 
   const authMode = String(env.AZURE_FOUNDRY_AGENT_AUTH || "azure-cli").trim().toLowerCase();
@@ -214,7 +226,7 @@ async function resolveFoundryAgentAuth(body, env) {
     return { bearerToken: getAzureCliAccessToken(resource) };
   }
 
-  const key = String(body.foundryKey || env.AZURE_OPENAI_API_KEY || env.FOUNDRY_API_KEY || "").trim();
+  const key = cleanConfigValue(env.AZURE_OPENAI_API_KEY || env.FOUNDRY_API_KEY || env.HARDCODED_FOUNDRY_KEY || body.foundryKey || "");
   return { key };
 }
 
@@ -249,7 +261,13 @@ export async function handleFoundryChat(req, res, env = process.env) {
   try {
     const body = await readJsonBody(req);
     const { key, endpoint } = resolveFoundryChatConfig(body, env);
-    const deployment = String(body.foundryDeployment || env.AZURE_OPENAI_DEPLOYMENT || env.FOUNDRY_DEPLOYMENT || "").trim();
+    const deployment = cleanConfigValue(
+      env.AZURE_OPENAI_DEPLOYMENT ||
+      env.FOUNDRY_DEPLOYMENT ||
+      env.DEFAULT_FOUNDRY_DEPLOYMENT ||
+      body.foundryDeployment ||
+      ""
+    ).trim();
     if (!key) throw new Error("No Azure AI Foundry API key configured.");
     if (!endpoint) throw new Error("No Azure AI Foundry endpoint configured.");
     if (!deployment) throw new Error("No Azure AI Foundry deployment configured.");

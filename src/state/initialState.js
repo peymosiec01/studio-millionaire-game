@@ -4,8 +4,8 @@ import { getConfig } from "../config";
 export const createInitialState = () => ({
   screen: "splash",
   provider: "foundry",
-  apiKey: getConfig(["ANTHROPIC_API_KEY", "apiKey"], ""),
-  foundryKey: getConfig(["AZURE_OPENAI_API_KEY", "FOUNDRY_API_KEY", "foundryKey", "HARDCODED_FOUNDRY_KEY"], ""),
+  apiKey: "",
+  foundryKey: "",
   foundryProjectEndpoint: getConfig(
     ["AZURE_AI_PROJECT_ENDPOINT", "AZURE_EXISTING_AIPROJECT_ENDPOINT", "FOUNDRY_PROJECT_ENDPOINT", "foundryProjectEndpoint"],
     "https://res-jsaibuildathon.services.ai.azure.com/api/projects/jsaibuildathon"
@@ -15,7 +15,7 @@ export const createInitialState = () => ({
     "https://res-jsaibuildathon.openai.azure.com/openai/v1"
   ),
   foundryDeployment: getConfig(["AZURE_OPENAI_DEPLOYMENT", "FOUNDRY_DEPLOYMENT", "foundryDeployment"], "gpt-4.1-mini"),
-  foundryAgentEnabled: getConfig(["FOUNDRY_AGENT_ENABLED", "foundryAgentEnabled"], "true").toLowerCase() === "true",
+  foundryAgentEnabled: getConfig(["FOUNDRY_AGENT_ENABLED", "foundryAgentEnabled"], "false").toLowerCase() === "true",
   foundryAgentName: getConfig(["FOUNDRY_AGENT_NAME", "foundryAgentName"], "StudioMillionaireAgent"),
   foundryAgentVersion: getConfig(["FOUNDRY_AGENT_VERSION", "foundryAgentVersion"], ""),
   foundryAgentAutoApprove: getConfig(["FOUNDRY_AGENT_AUTO_APPROVE", "foundryAgentAutoApprove"], "true").toLowerCase() !== "false",

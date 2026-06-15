@@ -1,5 +1,21 @@
 const APP_CONFIG = typeof window !== "undefined" && window.__APP_CONFIG__ ? window.__APP_CONFIG__ : {};
-const BUILD_ENV = typeof import.meta !== "undefined" && import.meta.env ? import.meta.env : {};
+const BUILD_ENV = typeof import.meta !== "undefined" && import.meta.env ? {
+  VITE_AZURE_AI_PROJECT_ENDPOINT: import.meta.env.VITE_AZURE_AI_PROJECT_ENDPOINT,
+  VITE_AZURE_EXISTING_AIPROJECT_ENDPOINT: import.meta.env.VITE_AZURE_EXISTING_AIPROJECT_ENDPOINT,
+  VITE_FOUNDRY_PROJECT_ENDPOINT: import.meta.env.VITE_FOUNDRY_PROJECT_ENDPOINT,
+  VITE_AZURE_OPENAI_ENDPOINT: import.meta.env.VITE_AZURE_OPENAI_ENDPOINT,
+  VITE_FOUNDRY_OPENAI_ENDPOINT: import.meta.env.VITE_FOUNDRY_OPENAI_ENDPOINT,
+  VITE_AZURE_OPENAI_DEPLOYMENT: import.meta.env.VITE_AZURE_OPENAI_DEPLOYMENT,
+  VITE_FOUNDRY_DEPLOYMENT: import.meta.env.VITE_FOUNDRY_DEPLOYMENT,
+  VITE_FOUNDRY_AGENT_ENABLED: import.meta.env.VITE_FOUNDRY_AGENT_ENABLED,
+  VITE_FOUNDRY_AGENT_NAME: import.meta.env.VITE_FOUNDRY_AGENT_NAME,
+  VITE_FOUNDRY_AGENT_VERSION: import.meta.env.VITE_FOUNDRY_AGENT_VERSION,
+  VITE_FOUNDRY_AGENT_AUTO_APPROVE: import.meta.env.VITE_FOUNDRY_AGENT_AUTO_APPROVE,
+  VITE_CUSTOM_SHOW_ENABLED: import.meta.env.VITE_CUSTOM_SHOW_ENABLED,
+  VITE_CUSTOM_SHOW_TITLE: import.meta.env.VITE_CUSTOM_SHOW_TITLE,
+  VITE_CUSTOM_SHOW_TOPIC: import.meta.env.VITE_CUSTOM_SHOW_TOPIC,
+  VITE_CUSTOM_SHOW_SOURCE: import.meta.env.VITE_CUSTOM_SHOW_SOURCE,
+} : {};
 
 export const cleanConfigValue = (value) => {
   if (typeof value !== "string") return "";
