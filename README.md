@@ -1,4 +1,6 @@
-# 🎮 Studio Millionaire AI
+# 🎮 Studio Millionaire Game
+
+🚀 [Live App](https://wwbcm.azurewebsites.net/) and 🎥 [Demo Video](https://drive.google.com/file/d/1CwdQdNJfxrptBDozMuv-ob3uob36Y8Gr/view?usp=sharing)
 
 <img width="923" height="727" alt="image" src="https://github.com/user-attachments/assets/13f0cabe-2198-4ff3-af6c-2a73e14fc278" />
 
@@ -21,7 +23,7 @@
 
 ## 📖 Overview
 
-Studio Millionaire AI is an AI-powered game show platform inspired by *Who Wants to Be a Millionaire?*
+Studio Millionaire Game is an AI-powered game show platform inspired by *Who Wants to Be a Millionaire?*
 
 Instead of relying on static question banks, the platform dynamically generates grounded, validated, and replayable questions from knowledge sources, enabling users to learn through gameplay.
 
@@ -77,7 +79,7 @@ Generate a Studio Millionaire experience from:
 
 Traditional learning is passive.
 
-Studio Millionaire AI turns learning into an interactive experience by combining:
+Studio Millionaire Game turns learning into an interactive experience by combining:
 
 * Knowledge retrieval
 * AI question generation
@@ -201,7 +203,7 @@ npm run dev
 
 ## 🎥 Demo
 
-1. Launch Studio Millionaire.
+1. Launch [Studio Millionaire](https://wwbcm.azurewebsites.net/).
 2. Start Career Mode.
 3. Generate a grounded Copilot Studio question.
 4. Use a lifeline.
