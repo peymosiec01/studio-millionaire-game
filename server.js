@@ -20,6 +20,15 @@ const contentTypes = {
 };
 
 function sendStatic(req, res) {
+  const indexPath = join(distDir, "index.html");
+  if (!existsSync(indexPath)) {
+    sendJson(res, 503, {
+      error: "Build output is missing.",
+      details: "Run npm run build before starting the server, or deploy the dist folder with the app.",
+    });
+    return;
+  }
+
   const url = new URL(req.url, `http://${req.headers.host || "localhost"}`);
   const requested = normalize(decodeURIComponent(url.pathname)).replace(/^(\.\.[/\\])+/, "");
   let filePath = join(distDir, requested === "/" ? "index.html" : requested);
@@ -28,7 +37,7 @@ function sendStatic(req, res) {
     return;
   }
   if (!existsSync(filePath) || !statSync(filePath).isFile()) {
-    filePath = join(distDir, "index.html");
+    filePath = indexPath;
   }
   res.statusCode = 200;
   res.setHeader("Content-Type", contentTypes[extname(filePath)] || "application/octet-stream");
