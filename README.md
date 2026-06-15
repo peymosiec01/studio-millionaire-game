@@ -130,7 +130,7 @@ The result is a reusable platform capable of transforming almost any knowledge s
 * Microsoft Entra ID
 * Azure AI Foundry
 * Foundry IQ
-* Azure AI Search
+* Grounded with real-time web content
 * Optional Anthropic Integration
 
 ---
