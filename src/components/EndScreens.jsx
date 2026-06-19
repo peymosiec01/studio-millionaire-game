@@ -23,8 +23,16 @@ export function PromotionScreen({
         ))}
       </div>
       <div className="end-actions">
-        <button className="secondary-btn" onClick={onRestart}>Restart {currentStage?.shortTitle || "Stage"}</button>
-        <button className="walk-away-btn" onClick={onHome}>Home</button>
+        <button className="secondary-btn end-action-btn" onClick={onRestart}>
+          <span className="end-action-icon" aria-hidden="true">&#8635;</span>
+          <span className="end-action-full">Restart {currentStage?.shortTitle || "Stage"}</span>
+          <span className="end-action-short">Restart</span>
+        </button>
+        <button className="walk-away-btn end-action-btn" onClick={onHome}>
+          <span className="end-action-icon" aria-hidden="true">&#8962;</span>
+          <span className="end-action-full">Home</span>
+          <span className="end-action-short">Home</span>
+        </button>
       </div>
     </div>
   );
@@ -37,15 +45,16 @@ export function EndScreen({
   sprintScore,
   sprintBestScore,
   sprintNewBest,
+  practiceMode,
   onPrimary,
   onHome,
 }) {
   const title = screen === "sprintover"
     ? "Drill Sprint Complete"
     : screen === "won"
-      ? `${activeShowTitle} Cleared`
+      ? practiceMode ? "Practice Complete" : `${activeShowTitle} Cleared`
       : screen === "walkaway"
-        ? "Stage Paused"
+        ? practiceMode ? "Practice Ended" : "Stage Paused"
         : "Mission Failed";
   const bigPrize = screen === "sprintover"
     ? `${sprintScore} pts`
@@ -55,10 +64,16 @@ export function EndScreen({
   const copy = screen === "sprintover"
     ? `You scored ${sprintScore} points. ${sprintNewBest ? "New personal best." : `Best score: ${sprintBestScore}.`}`
     : screen === "won"
-      ? `You completed all ${QUESTIONS_PER_STAGE} missions in the ${activeShowTitle} show.`
+      ? practiceMode
+        ? `You completed all ${QUESTIONS_PER_STAGE} practice missions in ${activeShowTitle}. Career unlocks were not changed.`
+        : `You completed all ${QUESTIONS_PER_STAGE} missions in the ${activeShowTitle} show.`
       : screen === "walkaway"
-        ? `You stepped away from the ${activeShowTitle} show after clearing ${qNum} of ${QUESTIONS_PER_STAGE}.`
-        : `You missed a question in the ${activeShowTitle} show after clearing ${qNum} of ${QUESTIONS_PER_STAGE}.`;
+        ? practiceMode
+          ? `You ended practice in ${activeShowTitle} after clearing ${qNum} of ${QUESTIONS_PER_STAGE}.`
+          : `You stepped away from the ${activeShowTitle} show after clearing ${qNum} of ${QUESTIONS_PER_STAGE}.`
+        : practiceMode
+          ? `Practice stopped after ${qNum} of ${QUESTIONS_PER_STAGE}. Career progress was not changed.`
+          : `You missed a question in the ${activeShowTitle} show after clearing ${qNum} of ${QUESTIONS_PER_STAGE}.`;
 
   return (
     <div className="end-screen">
@@ -66,10 +81,20 @@ export function EndScreen({
       <div className="big-prize">{bigPrize}</div>
       <p>{copy}</p>
       <div className="end-actions">
-        <button className="cta-btn" onClick={onPrimary}>
-          {screen === "sprintover" ? "Retry Drill Sprint" : "Try This Stage Again"}
+        <button className="cta-btn end-action-btn" onClick={onPrimary}>
+          <span className="end-action-icon" aria-hidden="true">&#8635;</span>
+          <span className="end-action-full">
+            {screen === "sprintover" ? "Retry Drill Sprint" : "Try This Stage Again"}
+          </span>
+          <span className="end-action-short">
+            {screen === "sprintover" ? "Retry" : "Again"}
+          </span>
         </button>
-        <button className="secondary-btn" onClick={onHome}>Home</button>
+        <button className="secondary-btn end-action-btn" onClick={onHome}>
+          <span className="end-action-icon" aria-hidden="true">&#8962;</span>
+          <span className="end-action-full">Home</span>
+          <span className="end-action-short">Home</span>
+        </button>
       </div>
     </div>
   );

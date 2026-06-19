@@ -11,6 +11,7 @@ import {
   SPRINT_PRIZE_TIERS,
   SPRINT_TIME_PENALTY,
   SPRINT_TOTAL_SECONDS,
+  STAGES,
   STAGE_MAP,
 } from "./constants";
 import { cleanConfigValue, clone } from "./config";
@@ -450,6 +451,8 @@ function App() {
     draft.errorMsg = "";
   }, []);
 
+  const isPracticeMode = useCallback((snapshot = stateRef.current) => snapshot.gameMode === "practice", []);
+
   const loadQuestion = useCallback(async () => {
     const before = stateRef.current;
     if (isSprintMode(before) && before.screen !== "game") return;
@@ -521,8 +524,8 @@ function App() {
         draft.currentGrounding = foundryAgentMode ? { provider: "Foundry Agent", topic: topic.label } : null;
         draft.loading = false;
         draft.status = "";
-        if (!isSprintMode(draft)) draft.checkpoint = { type: "stage", stageKey: stage.key, qNum: draft.qNum };
-      }, true);
+        if (!isSprintMode(draft) && !isPracticeMode(draft)) draft.checkpoint = { type: "stage", stageKey: stage.key, qNum: draft.qNum };
+      }, !isPracticeMode(stateRef.current));
       playCue("lockin");
     } catch (err) {
       updateState((draft) => {
@@ -530,18 +533,23 @@ function App() {
         draft.currentGrounding = foundryAgentMode ? { provider: "Foundry Agent", topic: topic.label } : null;
         draft.loading = false;
         draft.errorMsg = `Could not load question: ${err.message}`;
-      }, true);
+      }, !isPracticeMode(stateRef.current));
     }
-  }, [playCue, runAgent, updateState]);
+  }, [isPracticeMode, playCue, runAgent, updateState]);
 
   const completeCurrentStage = useCallback(() => {
     playCue("win");
     updateState((draft) => {
       const currentStage = getCurrentStage(draft);
-      draft.bestStageProgress[currentStage.key] = Math.max(draft.bestStageProgress[currentStage.key] || 0, QUESTIONS_PER_STAGE);
-      draft.completedStages = Array.from(new Set([...draft.completedStages, currentStage.key]));
       draft.currentQ = null;
       draft.currentTopic = null;
+      if (isPracticeMode(draft)) {
+        draft.checkpoint = null;
+        draft.screen = "won";
+        return;
+      }
+      draft.bestStageProgress[currentStage.key] = Math.max(draft.bestStageProgress[currentStage.key] || 0, QUESTIONS_PER_STAGE);
+      draft.completedStages = Array.from(new Set([...draft.completedStages, currentStage.key]));
       if (currentStage.nextChoices?.length) {
         draft.unlockedStages = Array.from(new Set([...draft.unlockedStages, ...currentStage.nextChoices]));
         draft.checkpoint = { type: "promotion", stageKey: currentStage.key, qNum: QUESTIONS_PER_STAGE };
@@ -550,23 +558,29 @@ function App() {
         draft.checkpoint = null;
         draft.screen = "won";
       }
-    }, true);
-  }, [playCue, updateState]);
+    }, !isPracticeMode(stateRef.current));
+  }, [isPracticeMode, playCue, updateState]);
 
-  const startStage = useCallback((stageKey) => {
+  const startStage = useCallback((stageKey, options = {}) => {
+    const { mode = "career" } = options;
     ensureAudioReady();
     stopSprintTimer();
     playCue("start");
     usedTopicIdxsRef.current.clear();
     updateState((draft) => {
-      draft.gameMode = "career";
+      draft.gameMode = mode;
       draft.currentStageKey = stageKey;
       draft.screen = "game";
       draft.qNum = 0;
       resetRound(draft);
       draft.usedLifelines = { fifty: 1, audience: 1, phone: 1 };
-      draft.checkpoint = { type: "stage", stageKey, qNum: 0 };
-    }, true);
+      if (mode === "practice") {
+        draft.checkpoint = null;
+        draft.status = "Practice Mode - career unlocks and checkpoints are not changed.";
+      } else {
+        draft.checkpoint = { type: "stage", stageKey, qNum: 0 };
+      }
+    }, mode !== "practice");
     setTimeout(() => loadQuestion(), 0);
   }, [ensureAudioReady, loadQuestion, playCue, resetRound, stopSprintTimer, updateState]);
 
@@ -628,6 +642,20 @@ function App() {
     });
     startStage(firstStageKey);
   }, [ensureCustomShowPlan, startStage, stopSprintTimer, updateState]);
+
+  const selectStage = useCallback(async (stageKey) => {
+    if (hasCustomShow(stateRef.current)) {
+      try {
+        await ensureCustomShowPlan();
+      } catch {
+        return;
+      }
+    }
+    const current = stateRef.current;
+    if (!isValidStageKey(stageKey, current)) return;
+    const mode = current.unlockedStages.includes(stageKey) ? "career" : "practice";
+    startStage(stageKey, { mode });
+  }, [ensureCustomShowPlan, startStage]);
 
   const resumeProgress = useCallback(() => {
     stopSprintTimer();
@@ -802,11 +830,11 @@ function App() {
             draft.sprint.paused = true;
             draft.sprint.pausePending = false;
             draft.status = "Drill Sprint paused.";
-          } else if (!sprintMode) {
+          } else if (!sprintMode && !isPracticeMode(draft)) {
             draft.bestStageProgress[draft.currentStageKey] = Math.max(draft.bestStageProgress[draft.currentStageKey] || 0, draft.qNum);
             draft.checkpoint = { type: "stage", stageKey: draft.currentStageKey, qNum: Math.min(draft.qNum, QUESTIONS_PER_STAGE - 1) };
           }
-        }, true);
+        }, !isPracticeMode(stateRef.current));
         if (!sprintMode && stateRef.current.qNum >= QUESTIONS_PER_STAGE) completeCurrentStage();
         else if (!stateRef.current.sprint.paused) loadQuestion();
       }, sprintMode ? 900 : 2000);
@@ -856,11 +884,13 @@ function App() {
       updateState((draft) => {
         draft.screen = "lost";
         draft.currentQ = null;
-        draft.bestStageProgress[draft.currentStageKey] = Math.max(draft.bestStageProgress[draft.currentStageKey] || 0, draft.qNum);
-        draft.checkpoint = { type: "stage", stageKey: draft.currentStageKey, qNum: draft.qNum };
-      }, true);
+        if (!isPracticeMode(draft)) {
+          draft.bestStageProgress[draft.currentStageKey] = Math.max(draft.bestStageProgress[draft.currentStageKey] || 0, draft.qNum);
+          draft.checkpoint = { type: "stage", stageKey: draft.currentStageKey, qNum: draft.qNum };
+        }
+      }, !isPracticeMode(stateRef.current));
     }, 2800);
-  }, [completeCurrentStage, ensureAudioReady, finishSprint, loadQuestion, playCue, updateState]);
+  }, [completeCurrentStage, ensureAudioReady, finishSprint, isPracticeMode, loadQuestion, playCue, updateState]);
 
   const walkAway = useCallback(() => {
     ensureAudioReady();
@@ -873,10 +903,12 @@ function App() {
       draft.screen = "walkaway";
       draft.currentQ = null;
       draft.currentTopic = null;
-      draft.bestStageProgress[draft.currentStageKey] = Math.max(draft.bestStageProgress[draft.currentStageKey] || 0, draft.qNum);
-      draft.checkpoint = { type: "stage", stageKey: draft.currentStageKey, qNum: draft.qNum };
-    }, true);
-  }, [ensureAudioReady, finishSprint, playCue, updateState]);
+      if (!isPracticeMode(draft)) {
+        draft.bestStageProgress[draft.currentStageKey] = Math.max(draft.bestStageProgress[draft.currentStageKey] || 0, draft.qNum);
+        draft.checkpoint = { type: "stage", stageKey: draft.currentStageKey, qNum: draft.qNum };
+      }
+    }, !isPracticeMode(stateRef.current));
+  }, [ensureAudioReady, finishSprint, isPracticeMode, playCue, updateState]);
 
   const redeemItem = useCallback((itemId) => {
     updateState((draft) => {
@@ -1051,8 +1083,15 @@ function App() {
   const immediateRewardChips = sprintMode ? getImmediateRewardChips(currentReward) : [];
   const customShowActive = hasCustomShow(state);
   const foundryAgentMode = state.provider === "foundry" && state.foundryAgentEnabled;
-  const activeShowTitle = customShowActive ? getCustomShowTitle(state) : stage.title;
+  const practiceMode = state.gameMode === "practice";
+  const activeShowTitle = practiceMode ? `${stage.title} Practice` : customShowActive ? getCustomShowTitle(state) : stage.title;
   const customSplashCopy = customShowActive ? getCustomShowPlan(state)?.splashCopy : null;
+  const customShowPlan = getCustomShowPlan(state);
+  const stageChoices = (customShowActive ? customShowPlan?.stages || [] : STAGES)
+    .map((choice) => ({
+      ...choice,
+      unlocked: state.unlockedStages.includes(choice.key),
+    }));
   const splashTitle = customShowActive
     ? customSplashCopy?.title || `Rank Up in ${getCustomShowTitle(state)}`
     : "Rank Up in Agent Academy";
@@ -1110,7 +1149,7 @@ function App() {
     : "";
   const statusText = sprintMode
     ? `Score ${state.sprint.score} - Streak ${state.sprint.streak} - Time ${formatTime(state.sprint.timeLeft)}`
-    : `${state.qNum} of ${QUESTIONS_PER_STAGE} cleared`;
+    : `${practiceMode ? "Practice Mode - " : ""}${state.qNum} of ${QUESTIONS_PER_STAGE} cleared`;
   const savedProgress = hasSavedProgress(state);
   const modelSummary = isFoundry
     ? foundryAgentMode
@@ -1133,6 +1172,7 @@ function App() {
             splashTitle={splashTitle}
             splashLead={splashLead}
             homeNote={homeNote}
+            stageChoices={stageChoices}
             hasProgress={savedProgress}
             careerSummary={getCareerSummary(state)}
             bestSprintScore={state.sprintBestScore}
@@ -1142,6 +1182,7 @@ function App() {
             onStartGame={startGame}
             onResumeProgress={resumeProgress}
             onStartSprint={startSprint}
+            onSelectStage={selectStage}
           />
         )}
 
@@ -1191,7 +1232,8 @@ function App() {
             sprintScore={state.sprint.score}
             sprintBestScore={state.sprintBestScore}
             sprintNewBest={state.sprint.newBest}
-            onPrimary={state.screen === "sprintover" ? startSprint : () => startStage(stage.key)}
+            practiceMode={practiceMode}
+            onPrimary={state.screen === "sprintover" ? startSprint : () => startStage(stage.key, { mode: practiceMode ? "practice" : "career" })}
             onHome={goHome}
           />
         )}
@@ -1205,7 +1247,11 @@ function App() {
           onRedeem={redeemItem}
         />
 
-        <AppGuideLauncher onToggle={() => updateState((draft) => { draft.rewardGuideOpen = !draft.rewardGuideOpen; })} />
+        <AppGuideLauncher
+          wallet={wallet}
+          onOpenShop={() => updateState((draft) => { draft.shopOpen = true; })}
+          onToggle={() => updateState((draft) => { draft.rewardGuideOpen = !draft.rewardGuideOpen; })}
+        />
         <AppGuidePanel
           open={state.rewardGuideOpen}
           onClose={() => updateState((draft) => { draft.rewardGuideOpen = false; })}

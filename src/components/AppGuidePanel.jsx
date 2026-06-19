@@ -2,19 +2,43 @@ import React from "react";
 
 import { REWARD_PRINCIPLES, REWARD_RULES } from "../domain/rewards";
 
-export function AppGuideLauncher({ onToggle }) {
+export function AppGuideLauncher({ onToggle, onOpenShop, wallet }) {
+  const rewards = [
+    { key: "gems", icon: "\uD83D\uDC8E", value: wallet?.gems || 0, label: "gems" },
+    { key: "loot", icon: "\uD83D\uDCB0", value: wallet?.loot || 0, label: "loot" },
+    { key: "tokens", icon: "\uD83E\uDE99", value: wallet?.tokens || 0, label: "tokens" },
+  ].filter((item) => item.value > 0);
+
   return (
-    <button
-      className="reward-guide-launcher"
-      type="button"
-      aria-label="Open app guide"
-      title="App guide"
-      onClick={onToggle}
-    >
-      <svg viewBox="0 0 28 28" aria-hidden="true">
-        <path d="M7 14h10M7 8.5h14M7 19.5h6" />
-      </svg>
-    </button>
+    <div className={`reward-guide-launcher-shell${rewards.length ? " has-rewards" : ""}`}>
+      {rewards.map((item) => (
+        <button
+          key={item.key}
+          className={`reward-guide-badge ${item.key}`}
+          type="button"
+          aria-label={`Open reward shop. You have ${item.value} ${item.label}.`}
+          title={`Open shop: ${item.value} ${item.label}`}
+          onClick={onOpenShop}
+        >
+          <span>{item.icon}</span>
+          <strong>{item.value}</strong>
+        </button>
+      ))}
+      <button
+        className="reward-guide-launcher"
+        type="button"
+        aria-label={rewards.length ? `Open app guide. Rewards: ${rewards.map((item) => `${item.value} ${item.label}`).join(", ")}.` : "Open app guide"}
+        title="App guide"
+        onClick={onToggle}
+      >
+        <svg viewBox="0 0 28 28" aria-hidden="true">
+          <path d="M7 14h10M7 8.5h14M7 19.5h6" />
+        </svg>
+      </button>
+      {rewards.length > 0 && (
+        <span className="reward-guide-pulse" aria-hidden="true" />
+      )}
+    </div>
   );
 }
 

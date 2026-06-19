@@ -148,6 +148,8 @@ function Lifelines({ state, onFifty, onAudience, onPhone }) {
 }
 
 function QuestionSidebar({ sprintMode, stage, state, ladder, sprintPrizeProgress }) {
+  const mobileLadder = [...ladder].reverse();
+
   return (
     <aside className="sprint-sidebar">
       {sprintMode && (
@@ -163,7 +165,7 @@ function QuestionSidebar({ sprintMode, stage, state, ladder, sprintPrizeProgress
         </div>
       )}
       <div className="ladder-label">{sprintMode ? "PRIZE LADDER" : `${stage.shortTitle} Progress`}</div>
-      <div className="prize-ladder">
+      <div className="prize-ladder prize-ladder-desktop">
         {ladder.map((item) => (
           <div key={item.key} className={`prize-rung ${item.cls}`}>
             <span className="num">{item.num}</span>
@@ -172,7 +174,84 @@ function QuestionSidebar({ sprintMode, stage, state, ladder, sprintPrizeProgress
           </div>
         ))}
       </div>
+      <div className="prize-ladder prize-ladder-mobile" aria-label={sprintMode ? "Prize ladder from low to high" : `${stage.shortTitle} progress from first to last`}>
+        {mobileLadder.map((item) => (
+          <div key={`mobile-${item.key}`} className={`prize-rung ${item.cls}`}>
+            <span className="num">{item.num}</span>
+            <span className="amount">{item.amount}</span>
+            {item.reward && <span className="rung-reward">{item.reward}</span>}
+          </div>
+        ))}
+      </div>
     </aside>
+  );
+}
+
+function MobileQuestionRail({
+  sprintMode,
+  sprintDrill,
+  stage,
+  state,
+  ladder,
+  sprintPrizeProgress,
+  onTogglePause,
+  onWalkAway,
+  onToggleSound,
+}) {
+  const mobileLadder = [...ladder].reverse();
+
+  return (
+    <div className="mobile-question-rail">
+      <div className="mobile-rail-top">
+        {sprintMode ? (
+          <div className="mobile-rail-title mobile-rail-score">
+            <span className="mobile-rail-score-label">Score</span>
+            <span className="mobile-rail-score-value">{state.sprint.score}</span>
+          </div>
+        ) : (
+          <div className="mobile-rail-title">
+            <span className="mobile-rail-kicker">{stage.shortTitle}</span>
+            {/* <strong>M{state.qNum + 1}</strong> */}
+            {/* <span className="mobile-rail-meta">of {QUESTIONS_PER_STAGE}</span> */}
+          </div>
+        )}
+
+        <div className="mobile-rail-actions" aria-label={sprintMode ? "Sprint controls" : "Career controls"}>
+          {sprintMode && (
+            <>
+              <span className="mobile-rail-meta mobile-rail-timer">&#9716; {formatTime(state.sprint.timeLeft)}</span>
+              <span className="mobile-rail-meta mobile-rail-streak">&#128293; {state.sprint.streak}</span>
+              <span className="mobile-rail-separator" aria-hidden="true">|</span>
+            </>
+          )}
+          {sprintMode && (
+            <button className="mobile-rail-btn" type="button" onClick={onTogglePause} aria-label={state.sprint.paused ? "Resume" : "Pause"}>
+              {state.sprint.paused ? "\u25b6" : "\u23f8"}
+            </button>
+          )}
+          <button className="mobile-rail-btn danger" type="button" onClick={onWalkAway} aria-label={sprintMode ? "Stop sprint" : "Exit stage"}>
+            {sprintMode ? "\u23f9" : "\u23f9"}
+          </button>
+          <button className="mobile-rail-btn" type="button" onClick={onToggleSound} aria-label={state.soundEnabled ? "Sound on" : "Sound off"}>
+            {state.soundEnabled ? "\ud83d\udd0a" : "\ud83d\udd07"}
+          </button>
+        </div>
+      </div>
+
+      {sprintMode && (
+        <div className="mobile-rail-progress" aria-label="Next sprint prize progress">
+          <div style={{ width: `${sprintPrizeProgress}%` }} />
+        </div>
+      )}
+
+      <div className="mobile-rail-ladder" aria-label={sprintMode ? `${sprintDrill.label} prize ladder` : `${stage.shortTitle} progress`}>
+        {mobileLadder.map((item) => (
+          <div key={`mobile-rail-${item.key}`} className={`mobile-rail-rung ${item.cls}`}>
+            {item.num}
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -203,6 +282,18 @@ export function QuestionScreen({
 }) {
   return (
     <div className={`game-layout ${sprintMode ? "sprint-game-layout" : ""} ${state.feedbackType ? `hit-${state.feedbackType}` : ""}`}>
+      <MobileQuestionRail
+        sprintMode={sprintMode}
+        sprintDrill={sprintDrill}
+        stage={stage}
+        state={state}
+        ladder={ladder}
+        sprintPrizeProgress={sprintPrizeProgress}
+        onTogglePause={onTogglePause}
+        onWalkAway={onWalkAway}
+        onToggleSound={onToggleSound}
+      />
+
       <div className="main-panel">
         {sprintMode && (
           <SprintSessionHeader

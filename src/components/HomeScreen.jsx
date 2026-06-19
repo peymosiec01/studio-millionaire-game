@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 export function AppHeader({ customShowActive, showTitle, onOpenSettings }) {
   return (
@@ -39,6 +39,7 @@ export function SplashScreen({
   splashTitle,
   splashLead,
   homeNote,
+  stageChoices,
   hasProgress,
   careerSummary,
   bestSprintScore,
@@ -48,8 +49,11 @@ export function SplashScreen({
   onStartGame,
   onResumeProgress,
   onStartSprint,
+  onSelectStage,
 }) {
+  const [stageSelectOpen, setStageSelectOpen] = useState(false);
   const splashTitleMatch = splashTitle.match(/^(Rank Up in)\s+(.+)$/i);
+  const toggleStageSelect = () => setStageSelectOpen((open) => !open);
 
   return (
     <div className="splash">
@@ -72,24 +76,57 @@ export function SplashScreen({
               : <button className="cta-btn splash-primary" onClick={onStartGame} disabled={customShowPlanning}>{customShowPlanning ? "Designing Show..." : "Start Career"}</button>}
             <button className="secondary-btn splash-secondary" onClick={onStartSprint} disabled={customShowPlanning}>Drill Sprint</button>
           </div>
+          <button className="stage-select-trigger" type="button" onClick={toggleStageSelect} disabled={customShowPlanning} aria-expanded={stageSelectOpen}>
+            {stageSelectOpen ? "Return to mission preview" : "Practice a specific stage"}
+          </button>
           {customShowPlanning && <div className="planning-note">Building your custom show structure before the first question...</div>}
           {errorMsg && <div className="err-box"><span>{errorMsg}</span></div>}
         </div>
 
-        <div className="home-showcase" aria-hidden="true">
-          <div className="showcase-ring">
-            <div className="showcase-core">
-              <span>15</span>
-              <small>Missions</small>
+        <div className={`home-showcase ${stageSelectOpen ? "stage-select-active" : ""}`} aria-hidden={stageSelectOpen ? undefined : "true"}>
+          {stageSelectOpen ? (
+            <div className="stage-select-panel">
+              <div className="stage-select-heading">
+                <h2>Stage practice</h2>
+                <span>Career unlocks stay protected.</span>
+              </div>
+              <div className="stage-select-grid">
+                {stageChoices.length ? stageChoices.map((choice) => (
+                  <button
+                    key={choice.key}
+                    className={`stage-select-card ${choice.unlocked ? "unlocked" : "practice"}`}
+                    type="button"
+                    onClick={() => onSelectStage(choice.key)}
+                  disabled={customShowPlanning}
+                >
+                  <span className="stage-select-status">{choice.unlocked ? "Unlocked" : "Practice"}</span>
+                  <span className="stage-select-copy">
+                    <strong>{choice.title}</strong>
+                    <em>{choice.intro}</em>
+                  </span>
+                </button>
+                )) : (
+                  <div className="stage-select-empty">Save or start the custom show to generate its stages.</div>
+                )}
+              </div>
             </div>
-          </div>
-          <div className="showcase-stat showcase-stat-top">50:50</div>
-          <div className="showcase-stat showcase-stat-mid">Audience</div>
-          <div className="showcase-stat showcase-stat-bottom">Phone</div>
+          ) : (
+            <>
+              <div className="showcase-ring">
+                <div className="showcase-core">
+                  <span>15</span>
+                  <small>Missions</small>
+                </div>
+              </div>
+              <div className="showcase-stat showcase-stat-top">50:50</div>
+              <div className="showcase-stat showcase-stat-mid">Audience</div>
+              <div className="showcase-stat showcase-stat-bottom">Phone</div>
+            </>
+          )}
         </div>
       </div>
 
-      <div className="home-summary-grid">
+      <div className={`home-summary-grid ${hasProgress ? "has-checkpoint" : "no-checkpoint"}`}>
         <div className={`home-summary-item ${hasProgress ? "has-progress" : "empty"}`}>
           <div className="summary-header">
             <div className="hero-kicker">{hasProgress ? "Progress" : "Career"}</div>

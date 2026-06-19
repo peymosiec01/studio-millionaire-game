@@ -69,6 +69,7 @@ export const TOPICS = [
   { label: "Special Ops: Microsoft Learn Docs MCP", url: `${SPECIAL_OPS_URL}ms-learn-mcp/` },
   { label: "Special Ops: Power Platform CLI MCP", url: `${SPECIAL_OPS_URL}power-platform-cli-mcp/` },
   { label: "Special Ops: YAML Specialist", url: `${SPECIAL_OPS_URL}yaml-specialist/` },
+  { label: "Special Ops: Docusign MCP", url: `${SPECIAL_OPS_URL}docusign-mcp/` },
 ];
 
 export const STAGES = [
@@ -118,6 +119,14 @@ export const STAGES = [
     shortTitle: "Spec Ops YAML",
     intro: "Deep-dive missions for the YAML Specialist track.",
     topicFilter: (topic) => topic.label === "Special Ops: YAML Specialist",
+    nextChoices: [],
+  },
+  {
+    key: "specialops-docusign",
+    title: "Special Ops: Docusign MCP",
+    shortTitle: "Spec Ops Docusign",
+    intro: "Deep-dive missions for the Docusign MCP track.",
+    topicFilter: (topic) => topic.label === "Special Ops: Docusign MCP",
     nextChoices: [],
   },
 ];
