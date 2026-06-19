@@ -60,6 +60,7 @@ export const createInitialState = () => ({
     paused: false,
     pausePending: false,
     timerFreezeQuestions: 0,
+    finishReason: "",
     claimedPrizeTiers: [],
   },
   bonusPoints: 0,

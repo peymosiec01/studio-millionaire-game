@@ -71,6 +71,7 @@ import { designCustomShowPlan, generateQuestionDraft } from "./ai/flows";
 
 const isAzureOpenAiEndpoint = (value) => typeof value === "string" && value.toLowerCase().includes(".openai.azure.com");
 const isFoundryProjectEndpoint = (value) => typeof value === "string" && value.toLowerCase().includes(".services.ai.azure.com/api/projects/");
+const SPRINT_FINAL_TIER_SCORE = SPRINT_PRIZE_TIERS[SPRINT_PRIZE_TIERS.length - 1]?.score || 0;
 
 function App() {
   const [state, setState] = useState(createInitialState);
@@ -369,8 +370,17 @@ function App() {
       draft.sprint.paused = false;
       draft.sprint.pausePending = false;
       draft.sprint.timerFreezeQuestions = 0;
+      draft.sprint.finishReason = reason;
+      draft.bonusPoints = 0;
+      draft.rewardWallet = { loot: 0, gems: 0, tokens: 0 };
+      draft.redeemedItems = [];
+      draft.shopOpen = false;
       if (isNewBest) draft.sprintBestScore = draft.sprint.score;
-      draft.status = reason === "walkaway" ? "Drill Sprint ended early." : "Time is up.";
+      draft.status = reason === "walkaway"
+        ? "Drill Sprint ended early."
+        : reason === "complete"
+          ? "Final sprint tier cleared."
+          : "Time is up.";
     }, true);
   }, [playCue, stopSprintTimer, updateState]);
 
@@ -608,6 +618,7 @@ function App() {
       draft.sprint.paused = false;
       draft.sprint.pausePending = false;
       draft.sprint.timerFreezeQuestions = 0;
+      draft.sprint.finishReason = "";
       draft.sprint.claimedPrizeTiers = [];
       draft.bonusPoints = 0;
       draft.rewardWallet = { loot: 0, gems: 0, tokens: 0 };
@@ -754,6 +765,7 @@ function App() {
         paused: false,
         pausePending: false,
         timerFreezeQuestions: 0,
+        finishReason: "",
         claimedPrizeTiers: [],
       };
       draft.bonusPoints = 0;
@@ -835,7 +847,8 @@ function App() {
             draft.checkpoint = { type: "stage", stageKey: draft.currentStageKey, qNum: Math.min(draft.qNum, QUESTIONS_PER_STAGE - 1) };
           }
         }, !isPracticeMode(stateRef.current));
-        if (!sprintMode && stateRef.current.qNum >= QUESTIONS_PER_STAGE) completeCurrentStage();
+        if (sprintMode && stateRef.current.sprint.score >= SPRINT_FINAL_TIER_SCORE) finishSprint("complete");
+        else if (!sprintMode && stateRef.current.qNum >= QUESTIONS_PER_STAGE) completeCurrentStage();
         else if (!stateRef.current.sprint.paused) loadQuestion();
       }, sprintMode ? 900 : 2000);
       return;
@@ -1232,6 +1245,7 @@ function App() {
             sprintScore={state.sprint.score}
             sprintBestScore={state.sprintBestScore}
             sprintNewBest={state.sprint.newBest}
+            sprintFinishReason={state.sprint.finishReason}
             practiceMode={practiceMode}
             onPrimary={state.screen === "sprintover" ? startSprint : () => startStage(stage.key, { mode: practiceMode ? "practice" : "career" })}
             onHome={goHome}

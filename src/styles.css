@@ -3857,8 +3857,66 @@ body:has(.splash) #app {
   gap: 1.25rem;
   max-width: 540px;
   padding: 3rem 2rem;
+  position: relative;
   animation: finalePop 400ms ease-out both;
 }
+.victory-screen {
+  overflow: hidden;
+}
+.victory-screen > :not(.victory-celebration) {
+  position: relative;
+  z-index: 1;
+}
+.victory-celebration {
+  position: relative;
+  width: 100%;
+  height: 96px;
+  pointer-events: none;
+  z-index: 1;
+}
+.trophy-mark {
+  width: 96px;
+  height: 96px;
+  margin: 0 auto;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid rgba(253, 240, 160, 0.46);
+  background:
+    radial-gradient(circle, rgba(253, 240, 160, 0.32), transparent 58%),
+    rgba(5, 15, 40, 0.72);
+  box-shadow: 0 0 46px rgba(240, 230, 140, 0.38);
+  font-size: 50px;
+  transform: translateY(0);
+  animation: trophyRise 650ms cubic-bezier(.2, .9, .25, 1.2) both;
+}
+.firework {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--gold-500);
+  box-shadow: 0 0 18px rgba(240, 230, 140, 0.8);
+  animation: fireworkCore 1400ms ease-out infinite;
+}
+.firework span {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 58px;
+  height: 2px;
+  transform-origin: left center;
+  background: linear-gradient(90deg, rgba(253, 240, 160, 0.95), transparent);
+  animation: fireworkRay 1400ms ease-out infinite;
+}
+.firework span:nth-child(2) { --ray-rotation: 72deg; }
+.firework span:nth-child(3) { --ray-rotation: 144deg; }
+.firework span:nth-child(4) { --ray-rotation: 216deg; }
+.fw-one { left: 14%; top: 20%; }
+.fw-two { right: 15%; top: 24%; animation-delay: 220ms; }
+.fw-two span { animation-delay: 220ms; }
+.fw-three { left: 50%; bottom: 10%; animation-delay: 440ms; }
+.fw-three span { animation-delay: 440ms; }
 .end-screen h1 {
   font-family: var(--font-display);
   font-size: 32px;
@@ -3919,6 +3977,23 @@ body:has(.splash) #app {
   line-height: 1.5;
 }
 
+@keyframes trophyRise {
+  from { opacity: 0; transform: translateY(10px) scale(0.76); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes fireworkCore {
+  0%, 100% { opacity: 0; transform: scale(0.3); }
+  18% { opacity: 1; transform: scale(1); }
+  72% { opacity: 0; transform: scale(1.9); }
+}
+
+@keyframes fireworkRay {
+  0% { opacity: 0; transform: rotate(var(--ray-rotation, 0deg)) scaleX(0); }
+  18% { opacity: 1; }
+  72%, 100% { opacity: 0; transform: rotate(var(--ray-rotation, 0deg)) scaleX(1); }
+}
+
 @media (max-width: 640px) {
   #app:has(.end-screen) {
     min-height: calc(100dvh - var(--header-h));
@@ -3930,6 +4005,14 @@ body:has(.splash) #app {
   .end-screen {
     padding: 1.5rem 1rem;
     gap: 0.9rem;
+  }
+  .trophy-mark {
+    width: 72px;
+    height: 72px;
+    font-size: 38px;
+  }
+  .firework span {
+    width: 40px;
   }
   .big-prize { font-size: 38px; }
   .end-screen h1 { font-size: 26px; }
@@ -5946,7 +6029,8 @@ body:has(.splash) #app {
   }
 
   .reward-guide-launcher {
-    border-radius: 21px 21px 21px 8px;
+    /* border-radius: 21px 21px 21px 8px; */
+    border-radius: 22px 8px 22px 22px;
   }
 
   .reward-guide-badge {

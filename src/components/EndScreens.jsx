@@ -1,6 +1,19 @@
 import React from "react";
 
-import { QUESTIONS_PER_STAGE } from "../constants";
+import { QUESTIONS_PER_STAGE, SPRINT_PRIZE_TIERS } from "../constants";
+
+const SPRINT_FINAL_TIER_SCORE = SPRINT_PRIZE_TIERS[SPRINT_PRIZE_TIERS.length - 1]?.score || 0;
+
+function CelebrationBurst() {
+  return (
+    <div className="victory-celebration" aria-hidden="true">
+      <div className="trophy-mark">&#127942;</div>
+      <div className="firework fw-one"><span></span><span></span><span></span><span></span></div>
+      <div className="firework fw-two"><span></span><span></span><span></span><span></span></div>
+      <div className="firework fw-three"><span></span><span></span><span></span><span></span></div>
+    </div>
+  );
+}
 
 export function PromotionScreen({
   currentStage,
@@ -10,7 +23,8 @@ export function PromotionScreen({
   onHome,
 }) {
   return (
-    <div className="end-screen promotion-screen">
+    <div className="end-screen promotion-screen victory-screen">
+      <CelebrationBurst />
       <h1>Recruit Cleared</h1>
       <div className="big-prize">Promotion Unlocked</div>
       <p>You completed all {QUESTIONS_PER_STAGE} Recruit missions. Choose the next track.</p>
@@ -45,12 +59,15 @@ export function EndScreen({
   sprintScore,
   sprintBestScore,
   sprintNewBest,
+  sprintFinishReason,
   practiceMode,
   onPrimary,
   onHome,
 }) {
+  const sprintVictory = screen === "sprintover" && (sprintFinishReason === "complete" || sprintScore >= SPRINT_FINAL_TIER_SCORE);
+  const victory = screen === "won" || sprintVictory;
   const title = screen === "sprintover"
-    ? "Drill Sprint Complete"
+    ? sprintVictory ? "Drill Sprint Victory" : "Drill Sprint Complete"
     : screen === "won"
       ? practiceMode ? "Practice Complete" : `${activeShowTitle} Cleared`
       : screen === "walkaway"
@@ -62,11 +79,13 @@ export function EndScreen({
       ? "Stage Complete"
       : `${qNum}/${QUESTIONS_PER_STAGE}`;
   const copy = screen === "sprintover"
-    ? `You scored ${sprintScore} points. ${sprintNewBest ? "New personal best." : `Best score: ${sprintBestScore}.`}`
+    ? sprintVictory
+      ? `Victory! You cleared the final sprint tier with ${sprintScore} points. ${sprintNewBest ? "New personal best." : `Best score: ${sprintBestScore}.`}`
+      : `You scored ${sprintScore} points. ${sprintNewBest ? "New personal best." : `Best score: ${sprintBestScore}.`}`
     : screen === "won"
       ? practiceMode
-        ? `You completed all ${QUESTIONS_PER_STAGE} practice missions in ${activeShowTitle}. Career unlocks were not changed.`
-        : `You completed all ${QUESTIONS_PER_STAGE} missions in the ${activeShowTitle} show.`
+        ? `Victory! You completed all ${QUESTIONS_PER_STAGE} practice missions in ${activeShowTitle}. Career unlocks were not changed.`
+        : `Victory! You completed all ${QUESTIONS_PER_STAGE} missions in the ${activeShowTitle} show.`
       : screen === "walkaway"
         ? practiceMode
           ? `You ended practice in ${activeShowTitle} after clearing ${qNum} of ${QUESTIONS_PER_STAGE}.`
@@ -76,7 +95,8 @@ export function EndScreen({
           : `You missed a question in the ${activeShowTitle} show after clearing ${qNum} of ${QUESTIONS_PER_STAGE}.`;
 
   return (
-    <div className="end-screen">
+    <div className={`end-screen ${victory ? "victory-screen" : ""}`}>
+      {victory && <CelebrationBurst />}
       <h1>{title}</h1>
       <div className="big-prize">{bigPrize}</div>
       <p>{copy}</p>
