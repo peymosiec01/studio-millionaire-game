@@ -102,7 +102,7 @@ export function SplashScreen({
                   <span className="stage-select-status">{choice.unlocked ? "Unlocked" : "Practice"}</span>
                   <span className="stage-select-copy">
                     <strong>{choice.title}</strong>
-                    <em>{choice.intro}</em>
+                    {/* <em>{choice.intro}</em> */}
                   </span>
                 </button>
                 )) : (

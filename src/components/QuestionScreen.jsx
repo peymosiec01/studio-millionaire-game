@@ -24,10 +24,10 @@ function SprintSessionHeader({
         </div>
         <div className="sprint-session-controls">
           <button className="sprint-control-btn" type="button" onClick={onTogglePause}>
-            {sprint.paused ? "▶ Resume" : sprint.pausePending ? "⏸ Pause Queued" : "⏸ Pause"}
+            {sprint.paused ? "▶️ Resume" : sprint.pausePending ? "⏸️ Pause Queued" : "⏸️ Pause"}
           </button>
           <button className="sprint-control-btn sprint-stop-btn" type="button" onClick={onStop}>
-            🛑 Stop
+            🔴 Stop
           </button>
           <button className="sprint-control-btn" type="button" onClick={onToggleSound}>
             {soundEnabled ? "🔊 Sound: On" : "🔇 Sound: Off"}
@@ -56,8 +56,8 @@ function SprintSessionHeader({
           )}
         </div>
         <div className="session-meta">
-          <div className="streak-badge">&#128293; {sprint.streak}</div>
-          <div className="timer-badge">&#9716; {formatTime(sprint.timeLeft)}</div>
+          <div className="streak-badge">🔥 {sprint.streak}</div>
+          <div className="timer-badge">⏱️ {formatTime(sprint.timeLeft)}</div>
           {sprint.timerFreezeQuestions > 0 && (
             <div className="timer-freeze-badge">Freeze {sprint.timerFreezeQuestions}Q</div>
           )}
@@ -88,7 +88,7 @@ function QuestionHeader({
       <div className="walk-away">
         {sprintMode && (
           <button className="walk-away-btn" onClick={onTogglePause}>
-            {sprint.paused ? "▶ Resume" : sprint.pausePending ? "⏸ Pause Queued" : "⏸ Pause"}
+            {sprint.paused ? "▶️ Resume" : sprint.pausePending ? "⏸️ Pause Queued" : "⏸️ Pause"}
           </button>
         )}
         {sprintMode && (
@@ -98,7 +98,7 @@ function QuestionHeader({
             <span className="bonus-points-action">Redeem</span>
           </button>
         )}
-        <button className="walk-away-btn" onClick={onWalkAway}>{sprintMode ? "🛑 Stop Round" : "🛇 Exit Stage"}</button>
+        <button className="walk-away-btn" onClick={onWalkAway}>{sprintMode ? "🔴 Stop Round" : "🔴 Exit Stage"}</button>
         <button className="walk-away-btn" onClick={onToggleSound}>{soundEnabled ? "🔊 Sound: On" : "🔇 Sound: Off"}</button>
       </div>
     </div>
@@ -219,21 +219,21 @@ function MobileQuestionRail({
         <div className="mobile-rail-actions" aria-label={sprintMode ? "Sprint controls" : "Career controls"}>
           {sprintMode && (
             <>
-              <span className="mobile-rail-meta mobile-rail-timer">&#9716; {formatTime(state.sprint.timeLeft)}</span>
-              <span className="mobile-rail-meta mobile-rail-streak">&#128293; {state.sprint.streak}</span>
+              <span className="mobile-rail-meta mobile-rail-timer">⏱️ {formatTime(state.sprint.timeLeft)}</span>
+              <span className="mobile-rail-meta mobile-rail-streak">🔥 {state.sprint.streak}</span>
               <span className="mobile-rail-separator" aria-hidden="true">|</span>
             </>
           )}
           {sprintMode && (
             <button className="mobile-rail-btn" type="button" onClick={onTogglePause} aria-label={state.sprint.paused ? "Resume" : "Pause"}>
-              {state.sprint.paused ? "\u25b6" : "\u23f8"}
+              {state.sprint.paused ? "▶️" : "⏸️"}
             </button>
           )}
           <button className="mobile-rail-btn danger" type="button" onClick={onWalkAway} aria-label={sprintMode ? "Stop sprint" : "Exit stage"}>
-            {sprintMode ? "\u23f9" : "\u23f9"}
+            {sprintMode ? "🔴" : "🔴"}
           </button>
           <button className="mobile-rail-btn" type="button" onClick={onToggleSound} aria-label={state.soundEnabled ? "Sound on" : "Sound off"}>
-            {state.soundEnabled ? "\ud83d\udd0a" : "\ud83d\udd07"}
+            {state.soundEnabled ? "🔊" : "🔇"}
           </button>
         </div>
       </div>
